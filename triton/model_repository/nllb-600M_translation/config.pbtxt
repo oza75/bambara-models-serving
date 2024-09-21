@@ -1,0 +1,39 @@
+backend: "ctranslate2"
+name: "nllb-600M_translation"
+max_batch_size: 8
+input [
+  {
+    name: "input_ids"
+    data_type: TYPE_INT64
+    dims: [ 512 ]
+  }
+]
+output [
+  {
+    name: "output_ids"
+    data_type: TYPE_INT64
+    dims: [ -1 ]
+  }
+]
+parameters [
+  {
+    key: "compute_type"
+    value {
+      string_value: "float32"
+    }
+  },
+  {
+    key: "max_decoding_length_multiple"
+    value {
+      string_value: "2"
+    }
+  },
+    {
+    key: "beam_size"
+    value {
+      string_value: "5"
+    }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

@@ -1,0 +1,18 @@
+service: 'service:TranslationService'
+labels:
+  owner: ozaml
+include:
+  - '*.py'
+models:
+  - "nllb-600M-mt-bam:latest"
+envs:
+  - name: LD_LIBRARY_PATH
+    value: /usr/lib/x86_64-linux-gnu/:/usr/local/cuda-12.6/lib64:/usr/local/lib/python3.10/site-packages/nvidia/cudnn/lib/:/usr/local/lib/python3.10/dist-packages/tensorrt_libs/
+  - name: CUDA_PATH
+    value: /usr/local/cuda-12.6
+python:
+  packages:
+    - transformers[torch]
+    - optimum[onnxruntime-gpu]
+docker:
+  setup_script: "./setup.sh"

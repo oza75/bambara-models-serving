@@ -1,0 +1,37 @@
+# curl -X POST http://localhost:8000/v2/models/nllb-600M_ensemble/infer
+#  -d '{
+#    "inputs": [
+#      {
+#        "name": "TEXT",
+#        "shape": [1],
+#        "datatype": "BYTES",
+#        "data": ["Bonjour"]
+#      }
+#    ],
+#    "outputs": [
+#      {
+#        "name": "TEXT_OUT"
+#      }
+#    ]
+#  }'
+POST http://localhost:8000/v2/models/nllb-600M_ensemble/infer
+Content-Type: application/json
+
+{
+    "inputs": [
+      {
+        "name": "TEXT",
+        "shape": [1, 1],
+        "datatype": "BYTES",
+        "data": [["Bonjour comment vas tu ?"]]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "TEXT_OUT"
+      }
+    ]
+  }
+
+###
+
