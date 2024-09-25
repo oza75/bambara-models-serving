@@ -1,0 +1,27 @@
+name: "transcription"
+backend: "python"
+max_batch_size: 0  # No batching if you want to process one input at a time
+model_transaction_policy {
+  decoupled: True
+}
+input [
+  {
+    name: "INPUTS"
+    data_type: TYPE_STRING   # Specify that the input is binary data (audio)
+    dims: [1]               # Single dimension for one audio file at a time
+  }
+]
+
+output [
+  {
+    name: "OUTPUT_TEXT"
+    data_type: TYPE_STRING  # The output will be a string (the transcription text)
+    dims: [1]               # Single output text
+  }
+]
+
+instance_group [
+  {
+    kind: KIND_CPU          # Use CPU for inference (update to GPU if needed)
+  }
+]

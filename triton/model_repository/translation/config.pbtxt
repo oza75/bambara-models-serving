@@ -1,0 +1,25 @@
+name: "translation"
+backend: "python"
+max_batch_size: 32
+input [
+  {
+    name: "INPUTS"
+    data_type: TYPE_STRING
+    dims: [ 3 ]
+  }
+]
+output [
+  {
+    name: "OUTPUT_TEXT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+instance_group [
+  {
+    kind: KIND_CPU
+  }
+]
+dynamic_batching {
+    max_queue_delay_microseconds: 50
+}

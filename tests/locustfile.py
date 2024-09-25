@@ -7,9 +7,11 @@ class TranslationServiceUser(HttpUser):
 
     # Example of test data to be sent
     test_data = {
-        "text": "On devrait partir voir John chez ses parents.",
-        "src_lang": "fra_Latn",
-        "tgt_lang": "bam_Latn"
+        "inputs": "On devrait partir voir John chez ses parents.",
+        "parameters": {
+            "src_lang": "fra_Latn",
+            "tgt_lang": "bam_Latn"
+        }
     }
 
     @task
@@ -17,4 +19,8 @@ class TranslationServiceUser(HttpUser):
         """
         Task to hit the translate endpoint with a POST request.
         """
-        self.client.post("/translate", json=self.test_data)
+        self.client.post(
+            "/",
+            json=self.test_data,
+            headers={"Authorization": "Bearer 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"}
+        )

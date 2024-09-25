@@ -15,49 +15,32 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
-RUN echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list
-
-# Install Intel MKL
-RUN apt-get update && apt-get install -y intel-basekit
-
-# Clone and install CTranslate2 library (with submodules)
-RUN git clone --recursive https://github.com/OpenNMT/CTranslate2 /CTranslate2 && \
-    cd /CTranslate2 && \
-    mkdir build && cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release && \
-    make -j$(nproc) && \
-    make install && \
-    ldconfig
-
-# Clone the CTranslate2 Triton backend repository
-RUN git clone https://github.com/speechmatics/ctranslate2_triton_backend /ctranslate2_triton_backend
-
-# Build and install the CTranslate2 Triton backend
-RUN cd /ctranslate2_triton_backend && mkdir build && cd build && cmake .. \
-    -DCMAKE_INSTALL_PREFIX:PATH=/opt/tritonserver \
-    -DTRITON_ENABLE_GPU=ON \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DTRITON_COMMON_REPO_TAG=r24.08 \
-    -DTRITON_CORE_REPO_TAG=r24.08 \
-    -DTRITON_BACKEND_REPO_TAG=r24.08 \
-    -Dctranslate2_DIR=/usr/local/share/cmake/CTranslate2 \
-    && make -j$(nproc) install
-
 # Install Python packages for tokenizer and other dependencies
 RUN pip3 install --upgrade pip && \
-    pip3 install transformers numpy sentencepiece
+    pip3 install resemble-enhance==0.0.2.dev240104122303 deepspeed~=0.12.1 torchaudio~=2.1.1 git+https://github.com/oza75/coqui-TTS.git@prod && \
+    pip3 install transformers[torch] numpy sentencepiece faster-whisper && \
+    pip3 uninstall -y onnxruntime && \
+    pip3 install optimum[onnxruntime-gpu]
+
+RUN  python3 -m pip install wheel && python3 -m pip install --upgrade tensorrt
+
+RUN mkdir -p "/trt_caches/nllb-600M-mt-french-bambara-trt-caches"
 
 # Copy your model repository into the container
 COPY ./model_repository /models
 
-# Copy any additional files like tokenizers if needed
-#COPY ./nllb-600M-tokenizer /nllb-600M-tokenizer
-COPY ./m2m100 /nllb-600M-tokenizer
+RUN apt-get update -y && apt install -y libcudnn8
+#RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+#    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
+#    apt-get update -y && apt-get install google-cloud-cli -y
 
 # Set environment variable for Triton model repository
 ENV TRITON_MODEL_REPOSITORY_PATH=/models
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/tritonserver/backends/ctranslate2:/opt/intel/oneapi/2024.2/lib/
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib/python3.10/dist-packages/tensorrt_bindings:/usr/local/lib/python3.10/dist-packages/tensorrt_libs:/usr/lib/x86_64-linux-gnu/:${LD_LIBRARY_PATH}"
+
+EXPOSE 8000
+EXPOSE 8001
+EXPOSE 8002
 
 # Start the Triton server with the model repository path
-CMD ["tritonserver", "--model-repository=/models"]
+CMD ["tritonserver", "--model-repository=/models", "--exit-timeout-secs=5"]

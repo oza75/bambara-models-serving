@@ -1,37 +1,104 @@
-# curl -X POST http://localhost:8000/v2/models/nllb-600M_ensemble/infer
-#  -d '{
-#    "inputs": [
-#      {
-#        "name": "TEXT",
-#        "shape": [1],
-#        "datatype": "BYTES",
-#        "data": ["Bonjour"]
-#      }
-#    ],
-#    "outputs": [
-#      {
-#        "name": "TEXT_OUT"
-#      }
-#    ]
-#  }'
-POST http://localhost:8000/v2/models/nllb-600M_ensemble/infer
+###
+POST http://localhost:8000/v2/models/translation/infer
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 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
+
+{
+  "inputs": [
+    {
+      "name": "INPUTS",
+      "shape": [
+        1,
+        3
+      ],
+      "datatype": "BYTES",
+      "data": [[
+          "I ni ce, i be cogo di?",
+          "bam_Latn",
+          "fra_Latn"
+      ]]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "OUTPUT_TEXT"
+    }
+  ]
+}
+
+###
+
+
+POST https://nc3iqa93hwuek941.us-east-1.aws.endpoints.huggingface.cloud/v2/models/translation/infer
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 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
+
+{
+  "inputs": [
+    {
+      "name": "INPUTS",
+      "shape": [
+        1,
+        3
+      ],
+      "datatype": "BYTES",
+      "data": [
+        [
+          "Bonjour comment vas tu ? Je suis content de te voir.",
+          "fra_Latn",
+          "bam_Latn"
+        ]
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "OUTPUT_TEXT"
+    }
+  ]
+}
+
+###
+
+
+# curl "https://auc843wufx0yxees.us-east-1.aws.endpoints.huggingface.cloud"
+#-X POST
+#-H "Accept: application/json"
+#-H "Authorization: Bearer hf_XXXXX"
+#-H "Content-Type: application/json"
+#-d '{
+#    "inputs": "Меня зовут Вольфганг и я живу в Берлине",
+#    "parameters": {
+#        "src_lang ": "fra_Latn",
+#        "tgt_lang  ": "bam_Latn"
+#    }
+#}'
+POST https://auc843wufx0yxees.us-east-1.aws.endpoints.huggingface.cloud
+Accept: application/json
+Authorization: Bearer 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
 Content-Type: application/json
 
 {
-    "inputs": [
-      {
-        "name": "TEXT",
-        "shape": [1, 1],
-        "datatype": "BYTES",
-        "data": [["Bonjour comment vas tu ?"]]
-      }
-    ],
-    "outputs": [
-      {
-        "name": "TEXT_OUT"
-      }
-    ]
+  "inputs": "Bonjour comment vas tu ? Je suis content de te voir.",
+  "parameters": {
+    "src_lang ": "fra_Latn",
+    "tgt_lang  ": "bam_Latn"
   }
+}
 
 ###
+POST http://localhost:8000/v2/models/transcription/infer
+Content-Type: application/octet-stream
+Inference-Header-Content-Length: 0
+Authorization: Bearer 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
+
+< ../data/audios/speaker_10/0.wav
+
+###
+
+
+
+
 
