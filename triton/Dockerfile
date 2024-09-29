@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 # Install Python packages for tokenizer and other dependencies
 RUN pip3 install --upgrade pip && \
     pip3 install resemble-enhance==0.0.2.dev240104122303 deepspeed~=0.12.1 torchaudio~=2.1.1 git+https://github.com/oza75/coqui-TTS.git@prod && \
-    pip3 install transformers[torch] numpy sentencepiece faster-whisper && \
+    pip3 install transformers[torch] numpy sentencepiece faster-whisper soundfile && \
     pip3 uninstall -y onnxruntime && \
     pip3 install optimum[onnxruntime-gpu]
 

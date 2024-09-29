@@ -28,8 +28,30 @@ Authorization: Bearer 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
 }
 
 ###
+POST http://localhost:8000/v2/models/tts/infer
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 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
 
+{
+  "inputs": [
+    {
+      "name": "TEXT",
+      "shape": [
+        1
+      ],
+      "datatype": "BYTES",
+      "data": ["I ni ce, i be cogo di?"]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "AUDIO"
+    }
+  ]
+}
 
+###
 POST https://nc3iqa93hwuek941.us-east-1.aws.endpoints.huggingface.cloud/v2/models/translation/infer
 Content-Type: application/json
 Accept: application/json

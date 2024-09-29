@@ -22,6 +22,6 @@ output [
 
 instance_group [
   {
-    kind: KIND_CPU          # Use CPU for inference (update to GPU if needed)
+    kind: KIND_GPU          # Use CPU for inference (update to GPU if needed)
   }
 ]

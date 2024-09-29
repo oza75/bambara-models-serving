@@ -17,7 +17,7 @@ output [
 ]
 instance_group [
   {
-    kind: KIND_CPU
+    kind: KIND_GPU
   }
 ]
 dynamic_batching {

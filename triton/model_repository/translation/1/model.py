@@ -34,7 +34,8 @@ class TritonPythonModel:
             device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             session_options = onnxruntime.SessionOptions()
             session_options.log_severity_level = 0
-            session_options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
+            if device != "cpu":
+                session_options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
 
             checkpoint = "/repository/nllb-600M-mt-french-bambara-v2.onnx"
             model = ORTModelForSeq2SeqLM.from_pretrained(
